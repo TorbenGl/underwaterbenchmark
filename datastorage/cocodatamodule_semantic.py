@@ -3,11 +3,11 @@ import torch
 import lightning
 from lightning.fabric.utilities.device_parser import _parse_gpu_ids
 from torch.utils.data import DataLoader 
-from datastorage.cocodataset import COCODataset
+from vfm_benchmark.underwaterbenchmark.datastorage.cocodataset_semantic import COCODataset_Semantic
 import torchvision.transforms.v2 as transforms
 from datastorage.transforms import RandomResizeCropSeg
 
-class CocoLightningDataModule(lightning.LightningDataModule):
+class CocoLightningDataModule_Semantic(lightning.LightningDataModule):
     def __init__(
         self,
         path,
@@ -23,6 +23,7 @@ class CocoLightningDataModule(lightning.LightningDataModule):
         ignore_idx: Optional[int] = None,
         pin_memory: bool = True,
         persistent_workers: bool = True,
+        increment_classes: bool = False
                 ) -> None:
         super().__init__()        
         self.path = path
@@ -44,29 +45,31 @@ class CocoLightningDataModule(lightning.LightningDataModule):
 
         self.train_transforms = RandomResizeCropSeg(size=(1080, 1920))
         self.val_transforms = None
-        self.test_transforms = None
+        
 
-        self.train_dataset = COCODataset(path=self.path,
+        self.train_dataset = COCODataset_Semantic(path=self.path,
                                          annotation_file=self.annotation_file_dict["train"],
                                          image_folder=self.image_folder,                                          
                                          fill_background=self.fill_background,
                                          id2label=self.id2label,
-                                         transforms=self.train_transforms  
+                                         transforms=self.train_transforms ,
+                                        increment_classes=increment_classes 
                                          )
 
-        self.val_dataset = COCODataset(path=self.path,
+        self.val_dataset = COCODataset_Semantic(path=self.path,
                                        annotation_file=self.annotation_file_dict["val"],
                                        image_folder=self.image_folder,
                                        fill_background=self.fill_background,
-                                       id2label=self.id2label)
+                                       id2label=self.id2label,
+                                        increment_classes=increment_classes)
 
-        self.test_dataset = COCODataset(path=self.path,
+        self.test_dataset = COCODataset_Semantic(path=self.path,
                                         annotation_file=self.annotation_file_dict["test"],
                                         image_folder=self.image_folder,
-                                        fill_background=self.fill_background,id2label=self.id2label)
+                                        fill_background=self.fill_background,id2label=self.id2label,
+                                        increment_classes=increment_classes)
                                         
-
-    
+   
     
     def train_dataloader(self):
         return DataLoader(self.train_dataset,

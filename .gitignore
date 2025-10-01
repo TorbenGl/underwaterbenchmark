@@ -1,6 +1,7 @@
 *.ckpt
 *.out
 *.sh
+*.pkl
 wandb/
 lightning_logs/
 *.html

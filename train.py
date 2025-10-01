@@ -5,7 +5,7 @@ torch.set_float32_matmul_precision("medium")
 
 from models.mask2former import Mask2FormerFinetuner
 
-from datastorage.cocodatamodule import CocoLightningDataModule
+from vfm_benchmark.underwaterbenchmark.datastorage.cocodatamodule_semantic import CocoLightningDataModule_Semantic
 
 import configs.runconfig as config  
 
@@ -14,7 +14,7 @@ from transformers import Mask2FormerImageProcessor
 if __name__=="__main__":
 
     preprocessor = Mask2FormerImageProcessor(**config.PREPROCESSOR_CONFIG,ignore_index=config.IGNORE_IDX)
-    data_module = CocoLightningDataModule(path=config.DATASET_DIR,  
+    data_module = CocoLightningDataModule_Semantic(path=config.DATASET_DIR,  
                                           image_folder=config.IMAGE_FOLDER, 
                                           annotation_file_dict=config.ANNOTATION_FILE_DICT, 
                                           fill_background=config.FILL_BACKGROUND, 

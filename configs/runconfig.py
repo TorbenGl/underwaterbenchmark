@@ -3,10 +3,13 @@ import sys
 import os
 from lightning.pytorch.loggers import WandbLogger
 
-
+# Logging
 wandb_logger = WandbLogger(log_model="all")
-#Training hyperparmeters
+LOGGER = wandb_logger
+
+# Define Checkpoint Name
 CHECKPOINTNAME = "ClownRat/mask2former-resnet-50-coco-instance"
+#Training hyperparmeters
 LEARNING_RATE=0.0001
 EPOCHS=50
 PRECISION='16-mixed'
@@ -18,9 +21,8 @@ CHECKPOINT_CALLBACK = ModelCheckpoint(save_top_k=1,
                                       save_on_train_epoch_end=True,
                                       dirpath="/home/ida01/tglobisch/checkpoints/cou" # Ensure saving happens at the end of a training epoch
                                      )
-LOGGER = WandbLogger(log_model="all")
-FREEZE_ENCODER = False
 
+FREEZE_ENCODER = False
 #Dataset
 DATASET_DIR="/mnt/scratch/tglobisch/datasets/cou/cou/coco/coco/"
 IMAGE_FOLDER = "images/"
@@ -32,32 +34,44 @@ ANNOTATION_FILE_DICT = {
 FILL_BACKGROUND = True
 NUM_WORKERS=5
 BATCH_SIZE=20
-ID2LABEL={0: 'Unknown Instance',
- 1: 'Scissors',
- 2: 'Plastic Cup',
- 3: 'Metal Rod',
- 4: 'Fork',
- 5: 'Bottle',
- 6: 'Soda Can',
- 7: 'Case',
- 8: 'Plastic Bag',
- 9: 'Cup',
- 10: 'Goggles',
- 11: 'Flipper',
- 12: 'LoCo',
- 13: 'Aqua',
- 14: 'Pipe',
- 15: 'Snorkel',
- 16: 'Spoon',
- 17: 'Lure',
- 18: 'Screwdriver',
- 19: 'Car',
- 20: 'Tripod',
- 21: 'ROV',
- 22: 'Knife',
- 23: 'Dive Weight',
- 24: 'Background',
- }
+
+# Class Increment
+INCREMENT_CLASSES = False  # Whether to use class increment or not
+# If True, the dataset classes will be incremented by 1 to include background class at index 0
+
+# Mapping from COCO category IDs AFTER Increament
+ID2LABEL={
+    0: 'Background',
+    1: 'Unknown Instance',
+    2: 'Scissors',
+    3: 'Plastic Cup',
+    4: 'Metal Rod',
+    5: 'Fork',
+    6: 'Bottle',
+    7: 'Soda Can',
+    8: 'Case',
+    9: 'Plastic Bag',
+    10: 'Cup',
+    11: 'Goggles',
+    12: 'Flipper',
+    13: 'LoCo',
+    14: 'Aqua',
+    15: 'Pipe',
+    16: 'Snorkel',
+    17: 'Spoon',
+    18: 'Lure',
+    19: 'Screwdriver',
+    20: 'Car',
+    21: 'Tripod',
+    22: 'ROV',
+    23: 'Knife',
+    24: 'Dive Weight',
+    }
+
+
+
+
+
 IMG_SIZE = (272, 480)
 PREPROCESSOR_CONFIG = {"do_normalize": True,
                 "do_rescale": True,
@@ -75,8 +89,7 @@ PREPROCESSOR_CONFIG = {"do_normalize": True,
                     ],
                     "num_labels": 24,
                     "reduce_labels": False,
-                    "resample": 2,
-                    "rescale_factor": 0.00392156862745098,
+                    "resample": 2,                    
                     "size": {
                       "height": 1080,
                       "width": 1920
