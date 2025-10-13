@@ -26,7 +26,7 @@ class COCODataset_Semantic(torch.utils.data.Dataset):
           else:
             self.fill_id = self.label2id["Background"]
           print(f"Fill background with id {self.fill_id}")  
-        
+                  
     def __getitem__(self, index: int):
         img_id = self.ids[index]
         img = self.path+self.image_folder+self.coco.loadImgs(img_id)[0]["file_name"]

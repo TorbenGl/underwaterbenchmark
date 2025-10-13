@@ -13,10 +13,11 @@ import torchmetrics
 
 class Mask2FormerFinetuner(lightning.LightningModule):
 
-    def __init__(self, id2label, lr, checkpointname, preprocessor,max_epochs,freeze_encoder=True , encoder_lr_multiplier=1e-5):
+    def __init__(self, id2label, lr, checkpointname, preprocessor, max_epochs ,freeze_encoder=True , encoder_lr_multiplier=1e-5):
         super(Mask2FormerFinetuner, self).__init__()
         self.id2label = id2label
         self.lr = lr
+        print(f"max_epochs: {max_epochs}")
         self.max_epochs = max_epochs 
         self.num_classes = len(id2label.keys())
         self.label2id = {v:k for k,v in self.id2label.items()}

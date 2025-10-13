@@ -17,7 +17,7 @@ DEVICES=[0]
 IGNORE_IDX=-1
 CHECKPOINT_CALLBACK = ModelCheckpoint(save_top_k=1, 
                                       monitor="valLoss", 
-                                      every_n_epochs=2,  # Save the model at every epoch 
+                                      every_n_epochs=1,  # Save the model at every epoch 
                                       save_on_train_epoch_end=True,
                                       dirpath="/home/ida01/tglobisch/checkpoints/cou" # Ensure saving happens at the end of a training epoch
                                      )
@@ -33,7 +33,7 @@ ANNOTATION_FILE_DICT = {
 }
 FILL_BACKGROUND = True
 NUM_WORKERS=5
-BATCH_SIZE=20
+BATCH_SIZE=40
 
 # Class Increment
 INCREMENT_CLASSES = False  # Whether to use class increment or not
@@ -69,10 +69,8 @@ ID2LABEL={
     }
 
 
-
-
-
-IMG_SIZE = (272, 480)
+# Preprocessor config
+IMG_SIZE = (270, 480)  # Height, Width
 PREPROCESSOR_CONFIG = {"do_normalize": True,
                 "do_rescale": True,
                   "do_resize": True,
@@ -91,8 +89,8 @@ PREPROCESSOR_CONFIG = {"do_normalize": True,
                     "reduce_labels": False,
                     "resample": 2,                    
                     "size": {
-                      "height": 1080,
-                      "width": 1920
+                      "height": 270,
+                      "width": 480
                     },
                     "size_divisor": 16
                     }  

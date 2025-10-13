@@ -3,7 +3,7 @@ import torch
 import lightning
 from lightning.fabric.utilities.device_parser import _parse_gpu_ids
 from torch.utils.data import DataLoader 
-from vfm_benchmark.underwaterbenchmark.datastorage.cocodataset_semantic import COCODataset_Semantic
+from datastorage.cocodataset_semantic import COCODataset_Semantic
 import torchvision.transforms.v2 as transforms
 from datastorage.transforms import RandomResizeCropSeg
 
@@ -43,7 +43,7 @@ class CocoLightningDataModule_Semantic(lightning.LightningDataModule):
 
         self.num_workers = num_workers
 
-        self.train_transforms = RandomResizeCropSeg(size=(1080, 1920))
+        self.train_transforms = RandomResizeCropSeg()
         self.val_transforms = None
         
 

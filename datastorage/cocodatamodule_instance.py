@@ -39,8 +39,9 @@ class CocoLightningDataModule_Instance(lightning.LightningDataModule):
         )        
         self.batch_size= batch_size
         self.num_workers = num_workers
-        self.train_transforms = RandomResizeCropSeg(size=(1080, 1920))
-        self.val_transforms = None    
+        self.train_transforms = RandomResizeCropSeg()
+
+        
         self.train_dataset = COCODataset_Instance(path=self.path,
                                          annotation_file=self.annotation_file_dict["train"],
                                          image_folder=self.image_folder,

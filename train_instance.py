@@ -5,7 +5,7 @@ torch.set_float32_matmul_precision("medium")
 
 from models.mask2former import Mask2FormerFinetuner
 
-from vfm_benchmark.underwaterbenchmark.datastorage.cocodatamodule_semantic import CocoLightningDataModule_Semantic
+from  datastorage.cocodatamodule_semantic import CocoLightningDataModule_Semantic
 
 import configs.runconfig as config  
 
@@ -25,10 +25,10 @@ if __name__=="__main__":
                                           id2label=config.ID2LABEL, 
                                           ignore_idx=config.IGNORE_IDX, 
                                           preprocessor=preprocessor)
+    
     model=Mask2FormerFinetuner(config.ID2LABEL, 
                                config.LEARNING_RATE, 
-                               config.CHECKPOINTNAME,
-                               config.IGNORE_IDX, 
+                               config.CHECKPOINTNAME,                                
                                preprocessor ,
                                max_epochs=config.EPOCHS,
                                freeze_encoder=config.FREEZE_ENCODER
