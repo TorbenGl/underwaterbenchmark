@@ -22,7 +22,7 @@ class COCODataset_Semantic(torch.utils.data.Dataset):
         self.ids = list(sorted(self.coco.imgs.keys()))
         if self.fill_background:
           if "Background" not in self.label2id:
-              self.fill_id = len(self.coco.cats)
+              self.fill_id = 0
           else:
             self.fill_id = self.label2id["Background"]
           print(f"Fill background with id {self.fill_id}")  

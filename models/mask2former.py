@@ -3,19 +3,18 @@ import torch
 from transformers import Mask2FormerForUniversalSegmentation
 from transformers import AutoImageProcessor
 from torch import nn
-import evaluate
 import time
 import json 
 import numpy as np
 from transformers import( Mask2FormerForUniversalSegmentation, Mask2FormerImageProcessor)
-import configs.runconfig  as config
 import torchmetrics
 
 class Mask2FormerFinetuner(lightning.LightningModule):
 
-    def __init__(self, id2label, lr, checkpointname, preprocessor, max_epochs ,freeze_encoder=True , encoder_lr_multiplier=1e-5):
+    def __init__(self, id2label, lr, checkpointname, preprocessor, max_epochs ,freeze_encoder=True , encoder_lr_factor=0.1, batch_size=1):
         super(Mask2FormerFinetuner, self).__init__()
         self.id2label = id2label
+        self.batch_size = batch_size        
         self.lr = lr
         print(f"max_epochs: {max_epochs}")
         self.max_epochs = max_epochs 
@@ -28,6 +27,8 @@ class Mask2FormerFinetuner(lightning.LightningModule):
             ignore_mismatched_sizes=True,            
         )       
         self.preprocessor = preprocessor
+        self.freeze_encoder = freeze_encoder
+        self.encoder_lr_factor = encoder_lr_factor
         if freeze_encoder:
           print("Freezing encoder")
           for param in self.model.model.pixel_level_module.encoder.parameters():
@@ -61,7 +62,7 @@ class Mask2FormerFinetuner(lightning.LightningModule):
             pixel_mask=batch["pixel_mask"]
         )
         loss = outputs.loss
-        self.log("trainLoss", loss, sync_dist=True,  batch_size=config.BATCH_SIZE )
+        self.log("trainLoss", loss, sync_dist=True,  batch_size=self.batch_size )
         return loss
     
     def validation_step(self, batch, batch_idx):
@@ -72,9 +73,9 @@ class Mask2FormerFinetuner(lightning.LightningModule):
             class_labels=[labels for labels in batch["class_labels"]],
         )
         loss = outputs.loss
-        self.log("valLoss", loss, sync_dist=True,  batch_size=config.BATCH_SIZE, on_epoch=True,logger=True, prog_bar=True)
+        self.log("valLoss", loss, sync_dist=True,  batch_size=self.batch_size, on_epoch=True,logger=True, prog_bar=True)
         lr = self.trainer.optimizers[0].param_groups[0]['lr']
-        self.log("learning_rate", lr, sync_dist=True, batch_size=config.BATCH_SIZE, on_epoch=True, logger=True, prog_bar=True)
+        self.log("learning_rate", lr, sync_dist=True, batch_size=self.batch_size, on_epoch=True, logger=True, prog_bar=True)
         return loss
     
     def on_validation_start(self):
@@ -85,12 +86,21 @@ class Mask2FormerFinetuner(lightning.LightningModule):
         self.model.train()
   
         
-    def configure_optimizers(self):        
-        # AdamW optimizer with specified learning rate
-        optimizer = torch.optim.AdamW([p for p in self.parameters() if p.requires_grad], lr=self.lr)      
-        # ReduceLROnPlateau scheduler
-        scheduler = {            'scheduler': torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, self.max_epochs, eta_min=1e-6),            
-                                 'monitor': 'valLoss'     }
+    def configure_optimizers(self): 
+        # If encoder is frozen, optimize only the unfrozen parameters
+        if self.freeze_encoder:
+            optimizer = torch.optim.AdamW([p for p in self.parameters() if p.requires_grad], lr=self.lr)
+            print("Freezed encoder, using same LR for all params") 
+        # If encoder is not frozen, use a lower learning rate for the encoder       
+        else:
+            print("Using lower LR for encoder")
+            encoder_params = [p for p in self.model.model.pixel_level_module.encoder.parameters() if p.requires_grad]
+            other_params = [p for n, p in self.model.named_parameters() if  not n.startswith('model.pixel_level_module.encoder')]
+            optimizer = torch.optim.AdamW([
+                {'params': encoder_params, 'lr': self.lr * self.encoder_lr_factor},
+                {'params': other_params, 'lr': self.lr}
+            ])
+        scheduler = {'scheduler': torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, self.max_epochs, eta_min=1e-6),'monitor': 'valLoss'}
         return {'optimizer': optimizer, 'lr_scheduler': scheduler}
     
     

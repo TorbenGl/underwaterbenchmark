@@ -1,7 +1,7 @@
 gitignore_parser==0.1.11
 jsonargparse[signatures]==4.27.7
 matplotlib==3.8.3
-timm==0.9.16
+
 wandb==0.16.5
 lightning==2.2.1
 transformers==4.39.2
@@ -11,3 +11,4 @@ torchvision==0.17.2
 ipykernel==6.29.4
 pycocotools==2.0.10
 jupyterlab==4.0.6
+timm==1.0.20

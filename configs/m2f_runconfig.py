@@ -8,9 +8,11 @@ wandb_logger = WandbLogger(log_model="all")
 LOGGER = wandb_logger
 
 # Define Checkpoint Name
-CHECKPOINTNAME = "ClownRat/mask2former-resnet-50-coco-instance"
+CHECKPOINTNAME = "facebook/mask2former-swin-large-ade-semantic"
 #Training hyperparmeters
 LEARNING_RATE=0.0001
+ENCODER_LEARNING_RATE_FACTOR=0.1
+
 EPOCHS=50
 PRECISION='16-mixed'
 DEVICES=[0]
@@ -22,7 +24,7 @@ CHECKPOINT_CALLBACK = ModelCheckpoint(save_top_k=1,
                                       dirpath="/home/ida01/tglobisch/checkpoints/cou" # Ensure saving happens at the end of a training epoch
                                      )
 
-FREEZE_ENCODER = False
+FREEZE_ENCODER = True
 #Dataset
 DATASET_DIR="/mnt/scratch/tglobisch/datasets/cou/cou/coco/coco/"
 IMAGE_FOLDER = "images/"
@@ -33,10 +35,10 @@ ANNOTATION_FILE_DICT = {
 }
 FILL_BACKGROUND = True
 NUM_WORKERS=5
-BATCH_SIZE=40
+BATCH_SIZE=60
 
 # Class Increment
-INCREMENT_CLASSES = False  # Whether to use class increment or not
+INCREMENT_CLASSES = True  # Whether to use class increment or not
 # If True, the dataset classes will be incremented by 1 to include background class at index 0
 
 # Mapping from COCO category IDs AFTER Increament
@@ -69,8 +71,10 @@ ID2LABEL={
     }
 
 
+
+
 # Preprocessor config
-IMG_SIZE = (270, 480)  # Height, Width
+IMG_SIZE = (272, 480)  # Height, Width
 PREPROCESSOR_CONFIG = {"do_normalize": True,
                 "do_rescale": True,
                   "do_resize": True,

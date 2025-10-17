@@ -7,7 +7,7 @@ from models.mask2former import Mask2FormerFinetuner
 
 from  datastorage.cocodatamodule_semantic import CocoLightningDataModule_Semantic
 
-import configs.runconfig as config  
+import configs.m2f_runconfig as config  
 
 from transformers import Mask2FormerImageProcessor
 
@@ -31,7 +31,9 @@ if __name__=="__main__":
                                config.CHECKPOINTNAME,                                
                                preprocessor ,
                                max_epochs=config.EPOCHS,
-                               freeze_encoder=config.FREEZE_ENCODER
+                               freeze_encoder=config.FREEZE_ENCODER,
+                                batch_size=config.BATCH_SIZE,
+                                encoder_lr_factor=config.ENCODER_LEARNING_RATE_FACTOR
                                )
 
     accelerator = 'cpu' if config.DEVICES[0] == "cpu" else 'cuda'
