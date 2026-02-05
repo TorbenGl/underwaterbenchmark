@@ -99,6 +99,28 @@ class SemanticLightningModule(L.LightningModule):
         self.val_acc = Accuracy(**base_metric_kwargs)
         self.test_acc = Accuracy(**base_metric_kwargs)
 
+    def on_save_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Filter out frozen backbone weights when saving checkpoints."""
+        if self.hparams.freeze_backbone:
+            state_dict = checkpoint["state_dict"]
+            # Remove all backbone parameters
+            keys_to_remove = [k for k in state_dict.keys() if "backbone" in k]
+            for key in keys_to_remove:
+                del state_dict[key]
+
+    def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Handle loading checkpoints that don't have backbone weights."""
+        state_dict = checkpoint["state_dict"]
+
+        # Check if backbone weights are missing
+        has_backbone = any("backbone" in k for k in state_dict.keys())
+
+        if not has_backbone:
+            # Add current (pretrained) backbone weights to checkpoint
+            for name, param in self.model.named_parameters():
+                if "backbone" in name:
+                    state_dict[f"model.{name}"] = param.data
+
     def on_fit_start(self):
         """Log parameter counts for backbone and head separately."""
         self._print_parameter_summary()
@@ -294,6 +316,10 @@ class SemanticLightningModule(L.LightningModule):
 
             pred_mask = pred.cpu().numpy()
             label_mask = label.cpu().numpy()
+
+            # Replace loss_ignore_index with metrics_ignore_index for visualization
+            if self.loss_ignore_index is not None and self.metrics_ignore_index is not None:
+                label_mask = np.where(label_mask == self.loss_ignore_index, self.metrics_ignore_index, label_mask)
 
             # Create colored masks using colormap
             pred_colored = cmap(pred_mask / max(self.num_classes - 1, 1))[:, :, :3]

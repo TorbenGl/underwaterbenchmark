@@ -129,7 +129,7 @@ class SeaClearBaseDataset(COCODatamodulePreset):
         "val": "splits/base_train.json",  # Using test as val
         "test": "splits/base_test.json",
     }
-    default_img_size = (1080, 1920)  # Height, Width (downscaled from 1080x1920)
+    default_img_size = (540, 960)  # Height, Width (downscaled from 1080x1920)
     ignore_index = None
     increase_idx = True
     fill_background = True
@@ -162,7 +162,7 @@ class SeaClearMaterialDataset(COCODatamodulePreset):
         "val": "splits/material_train.json",
         "test": "splits/material_test.json",
     }
-    default_img_size = (1080, 1920)
+    default_img_size = (540, 960)
     ignore_index = None
     increase_idx = False
     fill_background = True
@@ -195,7 +195,7 @@ class SeaClearSuperclassDataset(COCODatamodulePreset):
         "val": "splits/superclass_train.json",
         "test": "splits/superclass_test.json",
     }
-    default_img_size = (1080, 1920)
+    default_img_size = (540, 960)
     ignore_index = None
     increase_idx = False
     fill_background = True

@@ -224,7 +224,6 @@ class UperNetBackboneAdapter(nn.Module):
         out_channels: int = 512,
         weights: str = "IN21K",
         use_rasa_head: bool = True,
-        img_size: int = 224,
         **kwargs,
     ) -> "UperNetBackboneAdapter":
         """
@@ -237,7 +236,6 @@ class UperNetBackboneAdapter(nn.Module):
             out_channels: Number of output channels
             weights: Weight variant ("IN21K" or "LAION")
             use_rasa_head: Whether to use RASA head
-            img_size: Input image size
             **kwargs: Additional arguments
 
         Returns:
@@ -252,12 +250,13 @@ class UperNetBackboneAdapter(nn.Module):
             **kwargs,
         )
 
+        # Franca uses img_size=518 for pretrained weights
         return cls(
             feature_extractor=extractor,
             backbone_indices=backbone_indices,
             scales=scales,
             out_channels=out_channels,
-            img_size=img_size,
+            img_size=518,
         )
 
     @classmethod

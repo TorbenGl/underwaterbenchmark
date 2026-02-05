@@ -13,9 +13,26 @@ Available models:
 - franca_vitl14: ViT-L/14, 300M params, 1024 dim
 - franca_vitg14: ViT-g/14, 1.1B params, 1536 dim
 
-Each has two weight variants:
-- IN21K: Trained on ImageNet-21K
-- LAION: Trained on LAION-600M
+Weight variants:
+- IN21K: Trained on ImageNet-21K (all sizes)
+- LAION: Trained on LAION-600M (Large and Giant only)
+
+Presets (with RASA - position-debiased features):
+- upernet_franca_base: ViT-B/14 (IN21K)
+- upernet_franca_large: ViT-L/14 (IN21K)
+- upernet_franca_giant: ViT-g/14 (IN21K)
+- upernet_franca_large_laion: ViT-L/14 (LAION)
+- upernet_franca_giant_laion: ViT-g/14 (LAION)
+
+Presets (without RASA - standard patch features):
+- upernet_franca_base_no_rasa: ViT-B/14 (IN21K)
+- upernet_franca_large_no_rasa: ViT-L/14 (IN21K)
+- upernet_franca_giant_no_rasa: ViT-g/14 (IN21K)
+- upernet_franca_large_laion_no_rasa: ViT-L/14 (LAION)
+- upernet_franca_giant_laion_no_rasa: ViT-g/14 (LAION)
+
+Note: All presets load backbone with img_size=518 (fixed for pretrained weights).
+      Input images must be divisible by patch_size=14.
 """
 
 from typing import List
@@ -23,7 +40,7 @@ import torch.nn as nn
 
 from presets.Models import register_model
 from models.backbones import UperNetBackboneAdapter
-from models.UperNetModel import UperNetSegmentationModel
+from models.upernet_model import UperNetSegmentationModel
 
 
 class FrancaModelPreset:
@@ -72,7 +89,6 @@ class FrancaModelPreset:
             out_channels=cls.out_channels,
             weights=cls.weights,
             use_rasa_head=cls.use_rasa_head,
-            img_size=img_size[0],
         )
 
         # Hidden sizes for UperNet
@@ -95,7 +111,7 @@ class FrancaModelPreset:
         """Get preset information."""
         return {
             "name": cls.name,
-            "model": cls.model_name,
+            "backbone": cls.model_name,
             "weights": cls.weights,
             "backbone_indices": cls.backbone_indices,
             "scales": cls.scales,
@@ -195,13 +211,32 @@ class UperNetFrancaGiantLAION(FrancaModelPreset):
 # =============================================================================
 # UPERNET + FRANCA PRESETS (No RASA - standard features)
 # =============================================================================
+# These variants use standard patch token features instead of position-debiased
+# RASA features. They support any image size (must be divisible by patch_size=14).
+# Useful when position information is important or for larger image resolutions.
+
+@register_model
+class UperNetFrancaBaseNoRASA(FrancaModelPreset):
+    """UperNet with Franca ViT-B/14 without RASA head.
+
+    Uses standard patch token features instead of position-debiased RASA features.
+    Supports any image size divisible by 14.
+    """
+    name = "upernet_franca_base_no_rasa"
+    model_name = "franca_vitb14"
+    weights = "IN21K"
+    backbone_indices = [2, 5, 8, 11]
+    scales = [4.0, 2.0, 1.0, 0.5]
+    out_channels = 512
+    use_rasa_head = False
+
 
 @register_model
 class UperNetFrancaLargeNoRASA(FrancaModelPreset):
     """UperNet with Franca ViT-L/14 without RASA head.
 
     Uses standard patch token features instead of position-debiased RASA features.
-    Useful for comparison or when position information is important.
+    Supports any image size divisible by 14.
     """
     name = "upernet_franca_large_no_rasa"
     model_name = "franca_vitl14"
@@ -209,4 +244,52 @@ class UperNetFrancaLargeNoRASA(FrancaModelPreset):
     backbone_indices = [5, 11, 17, 23]
     scales = [4.0, 2.0, 1.0, 0.5]
     out_channels = 768
+    use_rasa_head = False
+
+
+@register_model
+class UperNetFrancaGiantNoRASA(FrancaModelPreset):
+    """UperNet with Franca ViT-g/14 without RASA head.
+
+    Uses standard patch token features instead of position-debiased RASA features.
+    Supports any image size divisible by 14.
+    """
+    name = "upernet_franca_giant_no_rasa"
+    model_name = "franca_vitg14"
+    weights = "IN21K"
+    backbone_indices = [9, 19, 29, 39]
+    scales = [4.0, 2.0, 1.0, 0.5]
+    out_channels = 1024
+    use_rasa_head = False
+
+
+@register_model
+class UperNetFrancaLargeLAIONNoRASA(FrancaModelPreset):
+    """UperNet with Franca ViT-L/14 (LAION weights) without RASA head.
+
+    Uses standard patch token features instead of position-debiased RASA features.
+    Supports any image size divisible by 14.
+    """
+    name = "upernet_franca_large_laion_no_rasa"
+    model_name = "franca_vitl14"
+    weights = "LAION"
+    backbone_indices = [5, 11, 17, 23]
+    scales = [4.0, 2.0, 1.0, 0.5]
+    out_channels = 768
+    use_rasa_head = False
+
+
+@register_model
+class UperNetFrancaGiantLAIONNoRASA(FrancaModelPreset):
+    """UperNet with Franca ViT-g/14 (LAION weights) without RASA head.
+
+    Uses standard patch token features instead of position-debiased RASA features.
+    Supports any image size divisible by 14.
+    """
+    name = "upernet_franca_giant_laion_no_rasa"
+    model_name = "franca_vitg14"
+    weights = "LAION"
+    backbone_indices = [9, 19, 29, 39]
+    scales = [4.0, 2.0, 1.0, 0.5]
+    out_channels = 1024
     use_rasa_head = False

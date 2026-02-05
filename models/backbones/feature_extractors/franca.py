@@ -156,6 +156,8 @@ class FrancaFeatureExtractor(FeatureExtractor):
 
             # Add CLS token back to match DINO format [B, 1+N, C]
             cls_token = outputs["x_norm_clstoken"]
+            if cls_token.dim() == 2:
+                cls_token = cls_token.unsqueeze(1)  # [B, C] -> [B, 1, C]
             full_features = torch.cat([cls_token, patch_tokens], dim=1)
 
             features = [full_features for _ in indices]
@@ -194,11 +196,13 @@ class FrancaFeatureExtractor(FeatureExtractor):
         config = FRANCA_CONFIGS[model_name]
 
         # Load model via torch.hub
+        # img_size=518 is required to match pretrained positional embeddings
         model = torch.hub.load(
             'valeoai/Franca',
             config["hub_name"],
             weights=weights,
             use_rasa_head=use_rasa_head,
+            img_size=518,
             pretrained=True,
         )
         model.eval()

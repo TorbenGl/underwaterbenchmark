@@ -10,6 +10,8 @@ lightning>=2.0.0
 # Computer Vision & Transformers
 transformers>=4.45.0  # Supports DINOv3 and latest models (requires PyTorch 2.5+)
 timm>=0.9.0
+einops>=0.7.0  # Required by NVIDIA RADIO models
+xformers>=0.0.23  # Memory-efficient attention for Franca and other transformer models
 
 # Data Processing & Augmentation
 kornia>=0.7.0
@@ -35,6 +37,7 @@ matplotlib>=3.7.0
 
 # Utilities
 rich>=13.0.0
+tqdm>=4.65.0
 ftfy>=6.1.0
 regex>=2023.0.0
 

@@ -16,7 +16,7 @@ from typing import Dict, Type, Optional, List
 import torch.nn as nn
 
 from models.backbones import UperNetBackboneAdapter
-from models.UperNetModel import UperNetSegmentationModel
+from models.upernet_model import UperNetSegmentationModel
 
 
 # =============================================================================

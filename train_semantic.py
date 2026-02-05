@@ -138,7 +138,8 @@ def setup_callbacks(args, run_dir: str) -> List[L.Callback]:
     try:
         callbacks.append(RichProgressBar())
     except Exception:
-        pass
+        from lightning.pytorch.callbacks import TQDMProgressBar
+        callbacks.append(TQDMProgressBar())
 
     return callbacks
 

@@ -68,7 +68,7 @@ class LIACiDataset(COCODatamodulePreset):
         "val": "coco-labels_train.json",  # Using train as val
         "test": "coco-labels_test.json",
     }
-    default_img_size =  (1080, 1920)  # Height, Width (HD aspect ratio, downscaled)
+    default_img_size =  (540, 960)  # Height, Width (HD aspect ratio, downscaled)
     ignore_index = None
     increase_idx = True  # Background = 0, classes start at 1
     fill_background = True

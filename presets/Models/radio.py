@@ -25,7 +25,7 @@ import torch.nn as nn
 
 from presets.Models import register_model
 from models.backbones import UperNetBackboneAdapter
-from models.UperNetModel import UperNetSegmentationModel
+from models.upernet_model import UperNetSegmentationModel
 
 
 class RadioModelPreset:
@@ -94,7 +94,7 @@ class RadioModelPreset:
         """Get preset information."""
         return {
             "name": cls.name,
-            "model": cls.model_name,
+            "backbone": cls.model_name,
             "scales": cls.scales,
             "out_channels": cls.out_channels,
         }
