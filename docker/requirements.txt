@@ -1,0 +1,51 @@
+# Core Deep Learning Framework
+# NOTE: PyTorch is installed separately in Dockerfile with CUDA support
+# torch>=2.0.0
+# torchvision>=0.15.0
+# torchaudio>=2.0.0
+
+# PyTorch Lightning (unified package for 2.0+)
+lightning>=2.0.0
+
+# Computer Vision & Transformers
+transformers>=4.45.0  # Supports DINOv3 and latest models (requires PyTorch 2.5+)
+timm>=0.9.0
+
+# Data Processing & Augmentation
+kornia>=0.7.0
+# opencv-python is provided by system package (python3-opencv)
+pillow>=10.0.0
+pycocotools>=2.0.6
+datasets>=2.14.0,<3.0.0  # HuggingFace datasets (pin to 2.x for stability)
+pyarrow>=14.0.0,<18.0.0  # Required by HuggingFace datasets
+
+# Scientific Computing
+numpy<2.0.0,>=1.24.0  # Pin to 1.x for compatibility with PyTorch/FFCV
+scipy>=1.10.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# Metrics & Evaluation
+torchmetrics>=1.0.0
+
+# Logging & Visualization
+wandb>=0.15.0
+tensorboard>=2.13.0
+matplotlib>=3.7.0
+
+# Utilities
+rich>=13.0.0
+ftfy>=6.1.0
+regex>=2023.0.0
+
+# Jupyter & Development
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+notebook>=7.0.0
+
+# CUDA Acceleration (required for FFCV, installed in Dockerfile before FFCV)
+# cupy-cuda11x>=12.0.0
+# numba>=0.57.0
+
+# FFCV - Fast data loading (will be installed separately in Dockerfile)
+# ffcv @ git+https://github.com/libffcv/ffcv.git

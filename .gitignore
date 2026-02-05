@@ -1,0 +1,63 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs and outputs
+logs/
+*.log
+wandb/
+
+# Model checkpoints and weights
+*.ckpt
+*.pth
+*.pt
+*.safetensors
+checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (typically large, stored externally)
+data/
+datasets/
+
+# Jobs (exclude GPU-specific jobs, keep archive)
+jobs/*
+!jobs/jobarchive/
+!jobs/job_template.yaml
+!jobs/README.md

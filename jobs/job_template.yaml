@@ -1,0 +1,74 @@
+# Job Configuration Template
+# Copy this file to jobs/gpuX/job_NNN.yaml and customize
+
+# ============================================================================
+# REQUIRED
+# ============================================================================
+dataset: "cou"                    # cou, uiis10k, usod10k, liaci, suim, trashcan, etc.
+model: "upernet_dinov3_base"      # upernet_dinov3_small, _base, _large, _7b
+
+# ============================================================================
+# DATA
+# ============================================================================
+data_root: "/workspace/data"
+
+# ============================================================================
+# TRAINING
+# ============================================================================
+batch_size: 22
+epochs: 100
+lr: 1e-4
+weight_decay: 1e-4
+
+# Scheduler: cosine, step, polynomial
+scheduler: "cosine"
+warmup_epochs: 0
+
+# Augmentation: none, light, medium, heavy, underwater
+augmentation: "medium"
+
+# ============================================================================
+# MODEL OPTIONS
+# ============================================================================
+freeze_backbone: true
+
+# Early stopping patience (set to 0 to disable)
+# early_stopping: 20
+
+# Resume from checkpoint
+# resume_from: "/workspace/logs/checkpoint.ckpt"
+
+# ============================================================================
+# HARDWARE
+# ============================================================================
+# GPU is set by the container, but can override here
+gpus: "0"
+precision: "16-mixed"             # 16-mixed, bf16-mixed, 32
+num_workers: 8
+
+# Gradient accumulation (effective_batch = batch_size * accumulate)
+# accumulate_grad_batches: 2
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+wandb_project: "UnderwaterBenchmark"
+experiment_name: "cou_dinov3_base_run1"  # Optional, auto-generated if not set
+log_dir: "/workspace/logs"
+
+# ============================================================================
+# AUTH
+# ============================================================================
+hf_login: true                    # Login to HuggingFace for DINOv3 models
+
+# ============================================================================
+# ADVANCED
+# ============================================================================
+# Cache dataset in RAM (requires large --shm-size)
+# cache_dataset: true
+
+# Extra CLI arguments (passthrough)
+# extra_args:
+#   - "--some_flag"
+#   - "--some_value"
+#   - "123"

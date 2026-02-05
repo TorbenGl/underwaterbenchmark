@@ -1,0 +1,165 @@
+# Docker Compose for Multi-GPU Training Queue
+#
+# Each service runs on a specific GPU and processes its job queue sequentially.
+#
+# Usage:
+#   docker compose up -d              # Start all GPU containers
+#   docker compose up -d gpu0 gpu1   # Start specific containers
+#   docker compose logs -f gpu0      # Follow logs for gpu0
+#   docker compose down             # Stop all containers
+#
+# Before running:
+#   1. Set HF_TOKEN environment variable (or .env file)
+#   2. Create job configs in jobs/gpu0/, jobs/gpu1/, etc.
+
+x-common: &common
+  build:
+    context: ./docker
+  image: underwater-benchmark:latest
+  shm_size: "50gb"
+  volumes:
+    # Code (read-only for safety)
+    - ./:/workspace/code:ro
+    # Jobs directory (read-only)
+    - ./jobs:/workspace/jobs:ro
+    # Data directory (shared, read-only)
+    - ${DATA_PATH:-/data}:/workspace/data:ro
+    # Logs directory (writable, shared)
+    - ${LOGS_PATH:-./logs}:/workspace/logs
+    # HuggingFace cache (shared across containers)
+    - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+  environment:
+    - HF_TOKEN=${HF_TOKEN}
+    - WANDB_API_KEY=${WANDB_API_KEY:-}
+    - CUDA_VISIBLE_DEVICES=0
+  working_dir: /workspace/code
+  restart: "no"
+
+services:
+  gpu0:
+    <<: *common
+    container_name: uwb-gpu0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu0
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu1:
+    <<: *common
+    container_name: uwb-gpu1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu1
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu2:
+    <<: *common
+    container_name: uwb-gpu2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["2"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu2
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu3:
+    <<: *common
+    container_name: uwb-gpu3
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["3"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu3
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu4:
+    <<: *common
+    container_name: uwb-gpu4
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["4"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu4
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu5:
+    <<: *common
+    container_name: uwb-gpu5
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["5"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu5
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu6:
+    <<: *common
+    container_name: uwb-gpu6
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["6"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu6
+        --workdir /workspace/code
+        --continue-on-failure
+
+  gpu7:
+    <<: *common
+    container_name: uwb-gpu7
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["7"]
+              capabilities: [gpu]
+    command: >
+      python scripts/run_queue.py
+        --jobs-dir /workspace/jobs/gpu7
+        --workdir /workspace/code
+        --continue-on-failure
