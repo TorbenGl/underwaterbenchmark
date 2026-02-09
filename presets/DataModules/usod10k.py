@@ -54,7 +54,7 @@ class USOD10KDataset(ImageMaskDatamodulePreset):
     train_annotation_file = "train_samples.json"
     val_annotation_file = "val_samples.json"
     test_annotation_file = "test_samples.json"
-    default_img_size =  (1080, 1920)  # Height, Width
+    default_img_size = (540, 960) # Height, Width
     num_classes = 2
     id2label = USOD10K_ID2LABEL
     label2id = USOD10K_LABEL2ID

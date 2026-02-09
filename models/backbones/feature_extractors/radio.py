@@ -79,16 +79,12 @@ class RadioFeatureExtractor(FeatureExtractor):
     """
     Feature extractor for NVIDIA RADIO models.
 
-    RADIO models are loaded via torch.hub and return:
-        - summary: Global feature vector [B, D]
-        - spatial_features: Spatial features [B, C, H, W] when using NCHW format
-
-    Note: RADIO doesn't expose intermediate transformer layers, so the same
-    final features are returned for all requested indices.
+    RADIO models are loaded via torch.hub and return features at specified
+    transformer layer indices using RADIOModel.forward_intermediates().
 
     Example:
         >>> extractor = RadioFeatureExtractor.from_pretrained("c-radio_v4-h")
-        >>> features = extractor.extract_features(pixel_values, indices=[0, 1, 2, 3])
+        >>> features = extractor.extract_features(pixel_values, indices=[7, 15, 23, 31])
     """
 
     def __init__(
@@ -124,7 +120,7 @@ class RadioFeatureExtractor(FeatureExtractor):
             patch_size=self._patch_size,
             num_layers=self._num_layers,
             num_special_tokens=0,  # RADIO returns spatial features without CLS
-            supports_intermediate=False,  # RADIO doesn't expose intermediate layers
+            supports_intermediate=True,
         )
 
     def extract_features(
@@ -135,36 +131,42 @@ class RadioFeatureExtractor(FeatureExtractor):
         output_attentions: bool = False,
     ) -> ExtractedFeatures:
         """
-        Extract features from the RADIO model.
+        Extract features from the RADIO model at specified layer indices.
 
-        RADIO returns (summary, spatial_features) where spatial_features
-        are in NCHW format. We convert to sequence format [B, N, C] to match
-        other extractors.
+        Uses RADIOModel.forward_intermediates() to get actual per-layer features.
+        Features are returned in [B, N, C] format (spatial tokens only, no prefix).
 
         Args:
             pixel_values: Input images [B, C, H, W]
-            indices: Layer indices (ignored - same features for all)
-            output_hidden_states: Not used (RADIO doesn't expose intermediate states)
-            output_attentions: Not used (RADIO doesn't expose attention weights)
+            indices: Layer indices to extract features from (0-based block indices)
+            output_hidden_states: Not used (kept for interface compatibility)
+            output_attentions: Not used (kept for interface compatibility)
 
         Returns:
-            ExtractedFeatures with same features duplicated for each index
+            ExtractedFeatures with features at specified layer indices
         """
         with torch.set_grad_enabled(self.training):
-            summary, spatial_features = self._model(pixel_values, feature_fmt='NCHW')
+            intermediates = self._model.forward_intermediates(
+                pixel_values,
+                indices=indices,
+                return_prefix_tokens=False,
+                norm=True,
+                stop_early=True,
+                output_fmt='NLC',
+                intermediates_only=True,
+                aggregation='sparse',
+            )
 
-        # Convert from NCHW [B, C, H, W] to sequence [B, N, C]
-        B, C, H, W = spatial_features.shape
-        spatial_seq = spatial_features.permute(0, 2, 3, 1).reshape(B, H * W, C)
-
-        # RADIO doesn't have CLS token, so we don't add one
-        # The UperNetBackboneAdapter needs to handle this (num_special_tokens=0)
-
-        # Duplicate features for each requested index
-        features = [spatial_seq for _ in indices]
+        # Handle duplicate indices (e.g. [31,31,31,31] for last-layer-only):
+        # forward_intermediates deduplicates via set, so expand back to match
+        # the caller's request
+        if len(intermediates) != len(indices):
+            unique_indices = sorted(set(indices))
+            index_map = {idx: feat for idx, feat in zip(unique_indices, intermediates)}
+            intermediates = [index_map[idx] for idx in indices]
 
         return ExtractedFeatures(
-            features=features,
+            features=intermediates,
             hidden_states=None,
             attentions=None,
         )

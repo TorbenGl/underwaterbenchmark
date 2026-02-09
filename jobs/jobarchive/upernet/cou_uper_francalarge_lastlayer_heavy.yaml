@@ -1,0 +1,21 @@
+# cou dataset with Franca Large IN21K (Last Layer)
+dataset: "cou"
+model: "upernet_franca_large_no_rasa_lastlayer"
+
+data_root: "/workspace/data"
+batch_size: 60
+epochs: 100
+lr: 1e-4
+weight_decay: 1e-4
+
+scheduler: "cosine"
+warmup_epochs: 0
+augmentation: "heavy"
+freeze_backbone: true
+gpus: "0"
+precision: "bf16-mixed"
+num_workers: 8
+wandb_project: "UnderwaterBenchmark"
+experiment_name: "_"
+log_dir: "/workspace/logs"
+hf_login: true

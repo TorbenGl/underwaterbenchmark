@@ -1,0 +1,21 @@
+# coralscapes dataset with Dinov3 7B (Linear Probing)
+dataset: "coralscapes"
+model: "linear_dinov3_7b"
+
+data_root: "/workspace/data"
+batch_size: 21
+epochs: 20
+lr: 1e-4
+weight_decay: 1e-4
+
+scheduler: "cosine"
+warmup_epochs: 0
+augmentation: "heavy"
+freeze_backbone: true
+gpus: "0"
+precision: "bf16-mixed"
+num_workers: 8
+wandb_project: "UnderwaterBenchmark"
+experiment_name: "_"
+log_dir: "/workspace/logs"
+hf_login: true

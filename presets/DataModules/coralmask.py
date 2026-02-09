@@ -58,7 +58,8 @@ class CoralMaskDataset(COCODatamodulePreset):
         "test": "test_annotations.json",
     }
     default_img_size = (540, 960)  # Height, Width
-    ignore_index = 255
+    loss_ignore_index = 255  # Padding value for loss computation
+    metric_ignore_index = 0  # Exclude background from mean metrics; also used to visualize padding as background
     increase_idx = False
     fill_background = True  # Add background class at index 0
     num_classes = len(CORALMASK_ID2LABEL)

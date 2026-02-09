@@ -32,8 +32,9 @@ Usage:
     )
 """
 
-# Main adapter
+# Main adapters
 from models.backbones.upernet_adapter import UperNetBackboneAdapter
+from models.backbones.resnet_adapter import ResNetBackboneAdapter
 
 # Feature extractors
 from models.backbones.feature_extractors import (
@@ -48,8 +49,9 @@ from models.backbones.feature_extractors import (
 )
 
 __all__ = [
-    # Main adapter
+    # Main adapters
     "UperNetBackboneAdapter",
+    "ResNetBackboneAdapter",
     # Feature extractors
     "FeatureExtractor",
     "FeatureExtractorConfig",

@@ -153,7 +153,7 @@ class COCODatamodulePreset(CocoLightningDataModule_Semantic):
             img_size=img_size or self.default_img_size,
             preprocessor=preprocessor,
             devices=devices,
-            ignore_idx=self.ignore_index,
+            ignore_idx=self.loss_ignore_index,
             increase_idx=self.increase_idx,
             fill_background=self.fill_background,
             pin_memory=pin_memory,

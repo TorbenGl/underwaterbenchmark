@@ -263,6 +263,7 @@ class UperNetBackboneAdapter(nn.Module):
     def from_radio(
         cls,
         model_name: str,
+        backbone_indices: Optional[List[int]] = None,
         scales: List[float] = [4.0, 2.0, 1.0, 0.5],
         out_channels: int = 512,
         img_size: int = 224,
@@ -271,11 +272,10 @@ class UperNetBackboneAdapter(nn.Module):
         """
         Create adapter with a RADIO feature extractor.
 
-        Note: RADIO doesn't support intermediate layer extraction, so
-        backbone_indices is set automatically.
-
         Args:
             model_name: Model name (e.g., "c-radio_v4-h")
+            backbone_indices: Layer indices to extract features from.
+                If None, evenly-spaced indices across model depth are used.
             scales: Spatial scales for each feature level
             out_channels: Number of output channels
             img_size: Input image size
@@ -285,14 +285,19 @@ class UperNetBackboneAdapter(nn.Module):
             UperNetBackboneAdapter instance
         """
         from models.backbones.feature_extractors import RadioFeatureExtractor
+        from models.backbones.feature_extractors.radio import RADIO_CONFIGS
 
         extractor = RadioFeatureExtractor.from_pretrained(
             model_name,
             **kwargs,
         )
 
-        # RADIO doesn't support intermediate layers, use dummy indices
-        backbone_indices = list(range(len(scales)))
+        if backbone_indices is None:
+            # Sensible defaults: evenly-spaced indices across model depth
+            num_layers = RADIO_CONFIGS[model_name]["num_layers"]
+            num_features = len(scales)
+            step = num_layers // num_features
+            backbone_indices = [step * (i + 1) - 1 for i in range(num_features)]
 
         return cls(
             feature_extractor=extractor,

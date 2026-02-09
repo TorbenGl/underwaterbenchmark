@@ -27,6 +27,7 @@ FRANCA_CONFIGS = {
         "patch_size": 14,
         "num_layers": 12,
         "hub_name": "franca_vitb14",
+        "checkpoint_img_size": 518,
     },
     "franca_vitl14": {
         "arch_name": "vit_large",
@@ -34,6 +35,7 @@ FRANCA_CONFIGS = {
         "patch_size": 14,
         "num_layers": 24,
         "hub_name": "franca_vitl14",
+        "checkpoint_img_size": 518,
     },
     "franca_vitg14": {
         "arch_name": "vit_giant",
@@ -41,6 +43,7 @@ FRANCA_CONFIGS = {
         "patch_size": 14,
         "num_layers": 40,
         "hub_name": "franca_vitg14",
+        "checkpoint_img_size": 224,  # Giant checkpoint has 224-sized pos_embed
     },
 }
 
@@ -196,14 +199,16 @@ class FrancaFeatureExtractor(FeatureExtractor):
         config = FRANCA_CONFIGS[model_name]
 
         # Load model via torch.hub
-        # img_size=518 is required to match pretrained positional embeddings
+        # img_size must match the checkpoint's positional embeddings to avoid
+        # pos_embed shape mismatch. Base/large use 518, giant uses 224.
+        # DINOv2 interpolates pos_embed during forward, so any input size works.
         model = torch.hub.load(
             'valeoai/Franca',
             config["hub_name"],
             weights=weights,
             use_rasa_head=use_rasa_head,
-            img_size=518,
             pretrained=True,
+            img_size=config["checkpoint_img_size"],
         )
         model.eval()
 

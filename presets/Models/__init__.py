@@ -151,9 +151,13 @@ class ModelPreset:
 # IMPORT PRESET MODULES (registers models via decorators)
 # =============================================================================
 
-from presets.Models import dino  # noqa: E402, F401
-from presets.Models import franca  # noqa: E402, F401
-from presets.Models import radio  # noqa: E402, F401
+from presets.Models import upernet_dino  # noqa: E402, F401
+from presets.Models import upernet_franca  # noqa: E402, F401
+from presets.Models import upernet_radio  # noqa: E402, F401
+from presets.Models import upernet_resnet  # noqa: E402, F401
+from presets.Models import linear_dino  # noqa: E402, F401
+from presets.Models import linear_franca  # noqa: E402, F401
+from presets.Models import linear_radio  # noqa: E402, F401
 
 
 # For convenience
