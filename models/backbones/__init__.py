@@ -35,6 +35,7 @@ Usage:
 # Main adapters
 from models.backbones.upernet_adapter import UperNetBackboneAdapter
 from models.backbones.resnet_adapter import ResNetBackboneAdapter
+from models.backbones.classification_adapter import ClassificationBackboneAdapter
 
 # Feature extractors
 from models.backbones.feature_extractors import (
@@ -52,6 +53,7 @@ __all__ = [
     # Main adapters
     "UperNetBackboneAdapter",
     "ResNetBackboneAdapter",
+    "ClassificationBackboneAdapter",
     # Feature extractors
     "FeatureExtractor",
     "FeatureExtractorConfig",

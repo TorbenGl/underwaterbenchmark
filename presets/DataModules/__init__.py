@@ -490,6 +490,7 @@ from presets.DataModules.seaclear import (
 from presets.DataModules.uiis10k import UIIS10KDataset
 from presets.DataModules.usod10k import USOD10KDataset
 from presets.DataModules.coralmask import CoralMaskDataset
+from presets.DataModules.deepfish import DeepFishDataset
 
 # For convenience
 AVAILABLE_DATASETS = list_datasets()

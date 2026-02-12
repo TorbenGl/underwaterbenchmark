@@ -3,7 +3,7 @@ dataset: "liaci"
 model: "upernet_resnet101"
 
 data_root: "/workspace/data"
-batch_size: 20
+batch_size: 12
 epochs: 100
 lr: 1e-4
 weight_decay: 1e-4
@@ -14,7 +14,7 @@ augmentation: "heavy"
 freeze_backbone: false
 gpus: "0"
 precision: "bf16-mixed"
-num_workers: 8
+num_workers: 2
 wandb_project: "UnderwaterBenchmark"
 experiment_name: "_"
 log_dir: "/workspace/logs"

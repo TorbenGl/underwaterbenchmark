@@ -129,18 +129,21 @@ class RadioFeatureExtractor(FeatureExtractor):
         indices: List[int],
         output_hidden_states: bool = False,
         output_attentions: bool = False,
+        return_prefix_tokens: bool = False,
     ) -> ExtractedFeatures:
         """
         Extract features from the RADIO model at specified layer indices.
 
         Uses RADIOModel.forward_intermediates() to get actual per-layer features.
-        Features are returned in [B, N, C] format (spatial tokens only, no prefix).
+        Features are returned in [B, N, C] format.
 
         Args:
             pixel_values: Input images [B, C, H, W]
             indices: Layer indices to extract features from (0-based block indices)
             output_hidden_states: Not used (kept for interface compatibility)
             output_attentions: Not used (kept for interface compatibility)
+            return_prefix_tokens: If True, include prefix tokens (CLS) in output.
+                When False (default), only spatial patch tokens are returned.
 
         Returns:
             ExtractedFeatures with features at specified layer indices
@@ -149,7 +152,7 @@ class RadioFeatureExtractor(FeatureExtractor):
             intermediates = self._model.forward_intermediates(
                 pixel_values,
                 indices=indices,
-                return_prefix_tokens=False,
+                return_prefix_tokens=return_prefix_tokens,
                 norm=True,
                 stop_early=True,
                 output_fmt='NLC',

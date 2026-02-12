@@ -44,7 +44,7 @@ freeze_backbone: true
 # GPU is set by the container, but can override here
 gpus: "0"
 precision: "16-mixed"             # 16-mixed, bf16-mixed, 32
-num_workers: 8
+num_workers: 2
 
 # Gradient accumulation (effective_batch = batch_size * accumulate)
 # accumulate_grad_batches: 2

@@ -158,6 +158,7 @@ from presets.Models import upernet_resnet  # noqa: E402, F401
 from presets.Models import linear_dino  # noqa: E402, F401
 from presets.Models import linear_franca  # noqa: E402, F401
 from presets.Models import linear_radio  # noqa: E402, F401
+from presets.Models import cls_dino  # noqa: E402, F401
 
 
 # For convenience
